@@ -1,4 +1,4 @@
-name: macOS
+name: macOS Ventura RDP
 on: 
   workflow_dispatch:
 defaults:
@@ -7,7 +7,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-13
     steps:
     - uses: actions/checkout@v2
     - name: Setting the Environment Up.
