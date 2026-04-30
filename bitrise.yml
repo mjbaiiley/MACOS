@@ -1,0 +1,39 @@
+format_version: "11"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+app:
+  envs:
+  - BITRISE_PROJECT_TITLE: macos-remote-test
+
+workflows:
+
+  primary:
+    steps:
+    - activate-ssh-key@4: {}
+
+    - git-clone@8: {}
+
+    # 🔧 Enable remote macOS access (VNC / screenshare)
+    - script@1:
+        title: Enable Remote Access
+        inputs:
+        - content: |
+            # Enable Screen Sharing (VNC-like access)
+            sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart \
+            -activate -configure -access -on -restart -agent -menu
+
+            # Allow all users to control screen
+            sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart \
+            -configure -allowAccessFor -allUsers
+
+            echo "Remote access enabled"
+
+    # 🧪 Keep machine alive for connection
+    - script@1:
+        title: Keep Build Alive
+        inputs:
+        - content: |
+            echo "Machine is ready for remote access..."
+            sleep 1800   # 30 minutes window
+
+    - deploy-to-bitrise-io@2: {}
